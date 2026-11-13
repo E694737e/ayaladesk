@@ -107,6 +107,9 @@ jobs:
         run: |
           python3 .\build.py --portable --flutter --skip-portable-pack --hwcodec --vram
           mv ./flutter/build/windows/x64/runner/Release ./rustdesk
+          # Own exe name => own extraction folder (%LOCALAPPDATA%\ayaladesk), so it never
+          # collides with a stock RustDesk portable on the same PC.
+          mv ./rustdesk/rustdesk.exe ./rustdesk/AyalaDesk.exe
           # Virtual display driver files, as upstream ships them
           Invoke-WebRequest -Uri https://github.com/rustdesk-org/rdev/releases/download/usbmmidd_v2/usbmmidd_v2.zip -OutFile usbmmidd_v2.zip
           Expand-Archive usbmmidd_v2.zip -DestinationPath .
@@ -127,7 +130,7 @@ jobs:
           sed -i '/dpiAware/d' res/manifest.xml
           pushd ./libs/portable
           pip3 install -r requirements.txt
-          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/rustdesk.exe
+          python3 ./generate.py -f ../../rustdesk/ -o . -e ../../rustdesk/AyalaDesk.exe
           popd
           mkdir -p ./out
           mv ./target/release/rustdesk-portable-packer.exe ./out/AyalaDesk.exe

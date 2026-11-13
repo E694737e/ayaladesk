@@ -58,6 +58,13 @@ def main():
     sub_line("Cargo.toml", r'^FileDescription = "RustDesk', f'FileDescription = "{DESC}"')
     sub_line("Cargo.toml", r'^LegalCopyright = ', f'LegalCopyright = "{COPY}"')
 
+    # The single-file wrapper (what the customer actually double-clicks)
+    P = "libs/portable/Cargo.toml"
+    sub_line(P, r'^ProductName = "RustDesk"', f'ProductName = "{NAME}"')
+    sub_line(P, r'^FileDescription = "RustDesk', f'FileDescription = "{DESC}"')
+    sub_line(P, r'^LegalCopyright = ', f'LegalCopyright = "{COPY}"')
+    sub_line(P, r'^OriginalFilename = ', f'OriginalFilename = "{NAME}.exe"')
+
     R = "flutter/windows/runner/Runner.rc"
     sub_line(R, r'VALUE "CompanyName",', 'VALUE "CompanyName", "Ayala" "\\0"')
     sub_line(R, r'VALUE "FileDescription",', f'VALUE "FileDescription", "{DESC}" "\\0"')
