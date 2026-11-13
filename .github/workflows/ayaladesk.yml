@@ -41,7 +41,9 @@ jobs:
 
       - name: Apply AyalaDesk branding
         shell: bash
-        run: bash ayaladesk/apply-branding.sh
+        run: |
+          sed -i 's/$//' ayaladesk/apply-branding.sh
+          bash -x ayaladesk/apply-branding.sh
 
       - name: Restore bridge files
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
