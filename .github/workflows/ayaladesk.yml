@@ -42,7 +42,7 @@ jobs:
       - name: Apply AyalaDesk branding
         shell: bash
         run: |
-          sed -i 's/$//' ayaladesk/apply-branding.sh
+          sed -i 's/\r$//' ayaladesk/apply-branding.sh
           bash -x ayaladesk/apply-branding.sh
 
       - name: Restore bridge files
