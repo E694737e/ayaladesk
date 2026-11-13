@@ -44,39 +44,54 @@ def sub_line(path, pattern, replacement):
     print(f"branded {path}: {pattern} ({hits})")
 
 
-C = "libs/hbb_common/src/config.rs"
-sub_line(C, r'pub static ref APP_NAME: RwLock<String> = RwLock::new\("RustDesk"',
-         f'pub static ref APP_NAME: RwLock<String> = RwLock::new("{NAME}".to_owned());')
-sub_line(C, r'^pub const RENDEZVOUS_SERVERS: ',
-         f'pub const RENDEZVOUS_SERVERS: &[&str] = &["{HOST}"];')
-sub_line(C, r'^pub const RS_PUB_KEY: ',
-         f'pub const RS_PUB_KEY: &str = "{KEY}";')
 
-sub_line("Cargo.toml", r'^ProductName = "RustDesk"', f'ProductName = "{NAME}"')
-sub_line("Cargo.toml", r'^FileDescription = "RustDesk', f'FileDescription = "{DESC}"')
-sub_line("Cargo.toml", r'^LegalCopyright = ', f'LegalCopyright = "{COPY}"')
+def main():
+    C = "libs/hbb_common/src/config.rs"
+    sub_line(C, r'pub static ref APP_NAME: RwLock<String> = RwLock::new\("RustDesk"',
+             f'pub static ref APP_NAME: RwLock<String> = RwLock::new("{NAME}".to_owned());')
+    sub_line(C, r'^pub const RENDEZVOUS_SERVERS: ',
+             f'pub const RENDEZVOUS_SERVERS: &[&str] = &["{HOST}"];')
+    sub_line(C, r'^pub const RS_PUB_KEY: ',
+             f'pub const RS_PUB_KEY: &str = "{KEY}";')
 
-R = "flutter/windows/runner/Runner.rc"
-sub_line(R, r'VALUE "CompanyName",', 'VALUE "CompanyName", "Ayala" "\\0"')
-sub_line(R, r'VALUE "FileDescription",', f'VALUE "FileDescription", "{DESC}" "\\0"')
-sub_line(R, r'VALUE "LegalCopyright",', f'VALUE "LegalCopyright", "{COPY}" "\\0"')
-sub_line(R, r'VALUE "ProductName",', f'VALUE "ProductName", "{NAME}" "\\0"')
+    sub_line("Cargo.toml", r'^ProductName = "RustDesk"', f'ProductName = "{NAME}"')
+    sub_line("Cargo.toml", r'^FileDescription = "RustDesk', f'FileDescription = "{DESC}"')
+    sub_line("Cargo.toml", r'^LegalCopyright = ', f'LegalCopyright = "{COPY}"')
 
-for src, dst in [
-    ("logo.ico", "res/icon.ico"),
-    ("logo.ico", "res/tray-icon.ico"),
-    ("logo.ico", "flutter/windows/runner/resources/app_icon.ico"),
-    ("logo-256.png", "res/icon.png"),
-    ("logo-32.png", "res/32x32.png"),
-    ("logo-64.png", "res/64x64.png"),
-    ("logo-128.png", "res/128x128.png"),
-    ("logo-256.png", "res/128x128@2x.png"),
-    ("logo.svg", "flutter/assets/icon.svg"),
-    ("logo-256.png", "flutter/assets/icon.png"),
-]:
-    if not Path(dst).parent.is_dir():
-        fail(f"missing folder for {dst}")
-    shutil.copyfile(B / src, dst)
-    print(f"icon {dst}")
+    R = "flutter/windows/runner/Runner.rc"
+    sub_line(R, r'VALUE "CompanyName",', 'VALUE "CompanyName", "Ayala" "\\0"')
+    sub_line(R, r'VALUE "FileDescription",', f'VALUE "FileDescription", "{DESC}" "\\0"')
+    sub_line(R, r'VALUE "LegalCopyright",', f'VALUE "LegalCopyright", "{COPY}" "\\0"')
+    sub_line(R, r'VALUE "ProductName",', f'VALUE "ProductName", "{NAME}" "\\0"')
 
-print("AyalaDesk branding applied")
+    for src, dst in [
+        ("logo.ico", "res/icon.ico"),
+        ("logo.ico", "res/tray-icon.ico"),
+        ("logo.ico", "flutter/windows/runner/resources/app_icon.ico"),
+        ("logo-256.png", "res/icon.png"),
+        ("logo-32.png", "res/32x32.png"),
+        ("logo-64.png", "res/64x64.png"),
+        ("logo-128.png", "res/128x128.png"),
+        ("logo-256.png", "res/128x128@2x.png"),
+        ("logo.svg", "flutter/assets/icon.svg"),
+        ("logo-256.png", "flutter/assets/icon.png"),
+    ]:
+        if not Path(dst).parent.is_dir():
+            fail(f"missing folder for {dst}")
+        shutil.copyfile(B / src, dst)
+        print(f"icon {dst}")
+
+    print("AyalaDesk branding applied")
+
+
+if __name__ == "__main__":
+    import os, traceback
+    print("cwd", os.getcwd(), "python", sys.version)
+    try:
+        main()
+    except SystemExit:
+        raise
+    except Exception:
+        tb = traceback.format_exc().replace(chr(10), " | ")
+        print(f"::error::BRANDING crashed: {tb}")
+        sys.exit(1)
